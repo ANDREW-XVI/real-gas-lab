@@ -112,7 +112,7 @@ GASES["hexane"] = GASES["n-hexane"]
 def get_species(name: str) -> Species:
     key = name.strip().lower().replace(" ", "-")
     if key not in GASES:
-        raise KeyError(f"Unknown gas '{name}'. Use 'list' to see the database or supply --Tc/--Pc/--omega.")
+        raise KeyError(f"Unknown gas '{name}'. Type 'list' to see the database or 'custom' to enter your own data.")
     return GASES[key]
 
 

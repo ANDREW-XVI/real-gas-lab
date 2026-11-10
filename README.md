@@ -6,7 +6,7 @@ Chemical engineering thermodynamics computer project (PVT behaviour, H and S, pu
 
 ![Phase diagram view](docs/screenshot.png)
 
-**Live site:** `https://<your-username>.github.io/<repo-name>/`
+**Live site:** https://andrew-xvi.github.io/real-gas-lab/
 
 ## What it does
 
@@ -30,6 +30,9 @@ pip install numpy scipy
 python python/cubic_eos.py
 ```
 
+Example: with the Python program (type what follows each prompt): gas `CO2`, equation of state `4` (Peng-Robinson), menu choice `1`, temperature `350`, pressure `100`. You should get Z = 0.6511, V = 189.47 cm³/mol, f = 71.11 bar, H^R = −4013.9 J/mol and S^R = −8.633 J/(mol K). Units may be typed with the value (`25C`, `5MPa`, `1atm`, `700psi`); menu choice `3` gives the vapour pressure and ΔH^vap below Tc.
+
+
 ## Tests
 
 ```bash
@@ -46,9 +49,10 @@ python python/validate.py          # consistency checks and independent cross-ch
 
 ```
 index.html, css/, js/       the website (eos.js = calculation engine, app.js = interface, gases.js = data)
+vendor/katex/               KaTeX (MIT licence), bundled so the Theory formulas work offline
 python/                     cubic_eos.py (guided program), validate.py, make_figures.py
 tests/                      JavaScript test and reference values from the Python program
-docs/report.pdf             project report (4 pages) with its LaTeX source
+docs/report.pdf             project report (3 pages) with its LaTeX source
 ```
 
 ## Method and data
@@ -62,4 +66,8 @@ Tc, Pc, ω and Cp data: J. M. Smith, H. C. Van Ness, M. M. Abbott, *Introduction
 - Ayush Vishwakarma — 2025CH71662
 - Naman Garg — 2025CH71053
 
-Tutorial group 2.
+Tutorial group 2. Submitted 10 November 2026.
+
+## Licences
+
+Formulas are typeset with [KaTeX](https://katex.org) (MIT licence, bundled in `vendor/katex/`).
