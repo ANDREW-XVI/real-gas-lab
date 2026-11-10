@@ -6,7 +6,7 @@ Chemical engineering thermodynamics computer project (PVT behaviour, H and S, pu
 
 ![Phase diagram view](docs/screenshot.png)
 
-**Live site:** `https://<your-username>.github.io/<repo-name>/`
+**Live site:** `https://andrew-xvi.github.io/real-gas-lab/`
 
 ## What it does
 
