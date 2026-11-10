@@ -6,7 +6,7 @@ Chemical engineering thermodynamics computer project (PVT behaviour, H and S, pu
 
 ![Phase diagram view](docs/screenshot.png)
 
-**Live site:** `https://andrew-xvi.github.io/real-gas-lab/`
+**Live site:** `https://<your-username>.github.io/<repo-name>/`
 
 ## What it does
 
@@ -59,4 +59,7 @@ Tc, Pc, ω and Cp data: J. M. Smith, H. C. Van Ness, M. M. Abbott, *Introduction
 
 ## Authors
 
-Name 1 (Roll No.), Name 2 (Roll No.), Tutorial group …
+- Ayush Vishwakarma — 2025CH71662
+- Naman Garg — 2025CH71053
+
+Tutorial group 2.

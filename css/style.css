@@ -116,3 +116,9 @@ tr:last-child td{border-bottom:0}
 
 /* equations: on narrow screens drop the equation number so wide formulae can scroll cleanly */
 @media (max-width:760px){.prose .eq{padding-right:16px}.prose .eqn{display:none}}
+
+.credit{margin-top:28px;padding-top:14px;border-top:1px solid var(--border);display:grid;gap:2px;font-size:12.5px;color:var(--faint)}
+.credit strong{color:var(--text);font-weight:600;font-size:13.5px;margin-top:4px}
+.credit small{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.credit a{margin-top:8px;color:var(--accent);text-decoration:none}.credit a:hover{text-decoration:underline}
+.credit .tg{margin-top:6px;font-size:12px;color:var(--muted)}
