@@ -283,9 +283,9 @@
   function viewCompare() {
     const sp = species();
     const rows = Object.keys(EOS).map(k => {
-      let r; try { r = RG.analyze(sp, EOS[k], S.T, S.P); } catch (e) { return `<tr><td>${EOS[k].short}</td><td colspan="8">${esc(e.message)}</td></tr>`; }
+      let r; try { r = RG.analyze(sp, EOS[k], S.T, S.P); } catch (e) { return `<tr><td>${EOS[k].name}</td><td colspan="8">${esc(e.message)}</td></tr>`; }
       const s = r.stable;
-      return `<tr class="${k === S.eos ? 'sel' : ''}"><td>${EOS[k].short}</td><td>${nf(s.Z, 4)}</td><td>${nf(s.V, 1)}</td><td>${nf(s.phi, 4)}</td><td>${nf(s.f, 2)}</td><td>${nf(s.HR, 0)}</td><td>${nf(s.SR, 2)}</td><td>${nf(s.H, 0)}</td><td>${nf(s.S, 2)}</td><td>${r.Psat ? nf(r.Psat, 3) : '–'}</td></tr>`;
+      return `<tr class="${k === S.eos ? 'sel' : ''}"><td>${EOS[k].name}</td><td>${nf(s.Z, 4)}</td><td>${nf(s.V, 1)}</td><td>${nf(s.phi, 4)}</td><td>${nf(s.f, 2)}</td><td>${nf(s.HR, 0)}</td><td>${nf(s.SR, 2)}</td><td>${nf(s.H, 0)}</td><td>${nf(s.S, 2)}</td><td>${r.Psat ? nf(r.Psat, 3) : '–'}</td></tr>`;
     }).join('');
     const seg = Object.entries(METRICS).map(([k, v]) => `<button type="button" data-metric="${k}" class="${k === S.metric ? 'on' : ''}">${k === 'phi' ? 'φ' : k === 'HR' ? 'H<sup>R</sup>' : k === 'SR' ? 'S<sup>R</sup>' : 'Z'}</button>`).join('');
     return `<div class="shd"><h1>Four equations, one state</h1><span>${esc(sp.name)} at ${nf(S.T, 2)} K and ${nf(S.P, 3)} bar</span></div>
@@ -295,29 +295,48 @@
       <div class="legendline">${Object.keys(EOS).map(k => `<span><i style="border-color:${EOS_STYLE[k][0]};${EOS_STYLE[k][1] ? 'border-top-style:dashed' : ''}"></i>${EOS[k].name}</span>`).join('')}<span>the selected equation is drawn thicker; a jump marks condensation at the vapour pressure</span></div>`;
   }
 
+  /* Typeset TeX with the bundled KaTeX; fall back to plain text if it failed to load. */
+  function tex(src, display) {
+    if (window.katex) {
+      try { return window.katex.renderToString(src, { displayMode: !!display, throwOnError: false, output: 'html' }); }
+      catch (e) { /* fall through */ }
+    }
+    return '<code>' + src.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</code>';
+  }
+  function eq(src, label) {
+    return `<div class="eq">${tex(src, true)}${label ? `<span class="eqn">${label}</span>` : ''}</div>`;
+  }
+
   function viewTheory() {
+    const t = (s) => tex(s, false);
     return `<div class="prose"><div class="shd"><h1>Theory and method</h1></div>
-    <p>All four equations of state are written in one generic form, so a single set of formulae covers vdW, RK, SRK and PR. Symbols follow Smith, Van Ness &amp; Abbott, <i>Introduction to Chemical Engineering Thermodynamics</i>.</p>
+    <p>All four equations of state are written in one generic form, so a single set of formulae covers van der Waals, Redlich-Kwong, Soave-Redlich-Kwong and Peng-Robinson. Symbols follow Smith, Van Ness &amp; Abbott, <i>Introduction to Chemical Engineering Thermodynamics</i>.</p>
     <h2>Generic cubic equation</h2>
-    <div class="eq">P = RT / (V − b) − a(T) / [(V + εb)(V + σb)]</div>
-    <p>with b = Ω·R·T<sub>c</sub>/P<sub>c</sub> and a(T) = Ψ·α(T<sub>r</sub>)·R²T<sub>c</sub>²/P<sub>c</sub>. The constants are:</p>
-    <div class="card"><div class="tw"><table><tr><th>EOS</th><th>σ</th><th>ε</th><th>Ω</th><th>Ψ</th><th>α(T<sub>r</sub>)</th></tr>
-    <tr><td>vdW</td><td>0</td><td>0</td><td>1/8</td><td>27/64</td><td>1</td></tr><tr><td>RK</td><td>1</td><td>0</td><td>0.08664</td><td>0.42748</td><td>T<sub>r</sub><sup>−1/2</sup></td></tr>
-    <tr><td>SRK</td><td>1</td><td>0</td><td>0.08664</td><td>0.42748</td><td>[1+κ(1−√T<sub>r</sub>)]², κ = 0.480+1.574ω−0.176ω²</td></tr>
-    <tr><td>PR</td><td>1+√2</td><td>1−√2</td><td>0.07779</td><td>0.45724</td><td>[1+κ(1−√T<sub>r</sub>)]², κ = 0.37464+1.54226ω−0.26992ω²</td></tr></table></div></div>
+    ${eq('P = \\frac{RT}{V-b} - \\frac{a(T)}{(V+\\epsilon b)(V+\\sigma b)}', '1')}
+    <p>with ${t('b = \\Omega\\,\\dfrac{R T_c}{P_c}')} and ${t('a(T) = \\Psi\\,\\alpha(T_r)\\,\\dfrac{R^2 T_c^{2}}{P_c}')}, where ${t('T_r = T/T_c')}. The constants are:</p>
+    <div class="card"><div class="tw"><table class="tx"><tr><th>Equation</th><th>${t('\\sigma')}</th><th>${t('\\epsilon')}</th><th>${t('\\Omega')}</th><th>${t('\\Psi')}</th><th>${t('\\alpha(T_r)')}</th></tr>
+    <tr><td>van der Waals</td><td>${t('0')}</td><td>${t('0')}</td><td>${t('1/8')}</td><td>${t('27/64')}</td><td>${t('1')}</td></tr>
+    <tr><td>Redlich-Kwong</td><td>${t('1')}</td><td>${t('0')}</td><td>${t('0.08664')}</td><td>${t('0.42748')}</td><td>${t('T_r^{-1/2}')}</td></tr>
+    <tr><td>Soave-Redlich-Kwong</td><td>${t('1')}</td><td>${t('0')}</td><td>${t('0.08664')}</td><td>${t('0.42748')}</td><td>${t('\\left[1+\\kappa_{\\mathrm{SRK}}\\left(1-\\sqrt{T_r}\\right)\\right]^2')}</td></tr>
+    <tr><td>Peng-Robinson</td><td>${t('1+\\sqrt{2}')}</td><td>${t('1-\\sqrt{2}')}</td><td>${t('0.07779')}</td><td>${t('0.45724')}</td><td>${t('\\left[1+\\kappa_{\\mathrm{PR}}\\left(1-\\sqrt{T_r}\\right)\\right]^2')}</td></tr></table></div></div>
+    <p>where ${t('\\omega')} is the acentric factor and</p>
+    ${eq('\\kappa_{\\mathrm{SRK}} = 0.480 + 1.574\\,\\omega - 0.176\\,\\omega^2, \\qquad \\kappa_{\\mathrm{PR}} = 0.37464 + 1.54226\\,\\omega - 0.26992\\,\\omega^2', '2')}
     <h2>Compressibility factor</h2>
-    <p>With A = aP/(RT)² and B = bP/RT, Z = PV/RT satisfies a cubic. Below T<sub>c</sub> it can have three real roots: the smallest is liquid-like, the largest vapour-like, the middle one is unstable.</p>
-    <div class="eq">Z³ + [(ε+σ)B − (1+B)]Z² + [εσB² − (1+B)(ε+σ)B + A]Z − [(1+B)εσB² + AB] = 0</div>
+    <p>With ${t('A = \\dfrac{aP}{(RT)^2}')} and ${t('B = \\dfrac{bP}{RT}')}, the factor ${t('Z = \\dfrac{PV}{RT}')} satisfies a cubic. Below ${t('T_c')} it can have three real roots: the smallest is liquid-like, the largest vapour-like, the middle one is unstable.</p>
+    ${eq('Z^3 + \\big[(\\epsilon+\\sigma)B - (1+B)\\big]Z^2 + \\big[\\epsilon\\sigma B^2 - (1+B)(\\epsilon+\\sigma)B + A\\big]Z - \\big[(1+B)\\epsilon\\sigma B^2 + AB\\big] = 0', '3')}
     <h2>Fugacity</h2>
-    <div class="eq">ln φ = Z − 1 − ln(Z − B) − (A/B)·I,&nbsp;&nbsp; I = ln[(Z+σB)/(Z+εB)]/(σ−ε)&nbsp;&nbsp; f = φP</div>
-    <p>The stable phase is the root with the lowest ln φ. The vapour pressure P<sup>sat</sup> is found where ln φ of the liquid root equals ln φ of the vapour root.</p>
+    ${eq('\\ln\\varphi = Z - 1 - \\ln(Z-B) - \\frac{A}{B}\\,I', '4')}
+    ${eq('I = \\frac{1}{\\sigma-\\epsilon}\\ln\\frac{Z+\\sigma B}{Z+\\epsilon B}, \\qquad f = \\varphi P', '5')}
+    <p>For van der Waals (${t('\\sigma=\\epsilon=0')}) the integral reduces to ${t('I = B/Z')}. The stable phase is the root with the lowest ${t('\\ln\\varphi')}. The vapour pressure ${t('P^{\\mathrm{sat}}')} is found where ${t('\\ln\\varphi')} of the liquid root equals ${t('\\ln\\varphi')} of the vapour root.</p>
     <h2>Residual enthalpy and entropy</h2>
-    <div class="eq">H<sup>R</sup>/RT = Z − 1 + (d ln α/d ln T<sub>r</sub> − 1)(A/B)·I&nbsp;&nbsp;&nbsp; S<sup>R</sup>/R = ln(Z − B) + (d ln α/d ln T<sub>r</sub>)(A/B)·I</div>
-    <p>Total properties add the ideal-gas contribution from C<sub>p</sub><sup>ig</sup>/R = A + BT + CT² + D/T², measured from H = S = 0 for the ideal gas at 298.15 K and 1 bar.</p>
+    ${eq('\\frac{H^R}{RT} = Z - 1 + \\left(\\frac{d\\ln\\alpha}{d\\ln T_r} - 1\\right)\\frac{A}{B}\\,I', '6')}
+    ${eq('\\frac{S^R}{R} = \\ln(Z-B) + \\frac{d\\ln\\alpha}{d\\ln T_r}\\,\\frac{A}{B}\\,I', '7')}
+    <p>Total properties add the ideal-gas contribution, with ${t('\\dfrac{C_p^{ig}}{R} = A_0 + B_0 T + C_0 T^2 + \\dfrac{D_0}{T^2}')}, measured from ${t('H = S = 0')} for the ideal gas at 298.15 K and 1 bar:</p>
+    ${eq('H = H^{ig}(T) + H^R, \\qquad S = S^{ig}(T,P) + S^R, \\qquad \\Delta H^{\\mathrm{vap}} = H^V - H^L', '8')}
     <h2>Check of the numbers</h2>
-    <ul><li>The JavaScript engine of this page agrees with the Python program in the repository on 2,760 test states, to about 1e-14.</li>
-    <li>The Python program agrees with CoolProp's independent PR and SRK implementations to about 1e-9, and H<sup>R</sup>, S<sup>R</sup> obey H<sup>R</sup> = −RT²(∂ln φ/∂T)<sub>P</sub> and the Clapeyron equation.</li>
-    <li>Gas data (T<sub>c</sub>, P<sub>c</sub>, ω, C<sub>p</sub>) come from Smith, Van Ness &amp; Abbott, Tables B.1 and C.1. Cubic equations are approximate: they are weakest for liquid volumes, near the critical point and for polar fluids such as water and ammonia.</li></ul>
+    <ul><li>The JavaScript engine of this page agrees with the Python program in the repository on 2,760 test states, to about ${t('10^{-14}')}.</li>
+    <li>The Python program agrees with CoolProp's independent PR and SRK implementations to about ${t('10^{-9}')}. The residual properties obey ${t('H^R = -RT^2\\left(\\dfrac{\\partial \\ln\\varphi}{\\partial T}\\right)_P')} and the Clapeyron equation.</li>
+    <li>Gas data (${t('T_c')}, ${t('P_c')}, ${t('\\omega')}, ${t('C_p')}) come from Smith, Van Ness &amp; Abbott, Tables B.1 and C.1. Cubic equations are approximate: they are weakest for liquid volumes, near the critical point and for polar fluids such as water and ammonia.</li></ul>
     <p>Source code, tests and the project report are in the project repository (<code>python/</code>, <code>tests/</code>, <code>docs/report.pdf</code>).</p></div>`;
   }
 

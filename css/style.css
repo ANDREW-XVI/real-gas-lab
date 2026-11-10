@@ -29,8 +29,8 @@ select,input[type=text],input:not([type]),input[inputmode]{width:100%;background
 select{margin-bottom:16px;appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--faint) 50%),linear-gradient(135deg,var(--faint) 50%,transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat}
 select option{background:#151b1e}
 .custom{margin:-4px 0 14px}.custom .two{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-.eos{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px}
-.eos button{padding:9px;border:0;border-radius:8px;background:var(--raised);color:var(--muted);font-weight:550;cursor:pointer}
+.eos{display:grid;grid-template-columns:1fr;gap:6px;margin-bottom:20px}
+.eos button{padding:9px 12px;text-align:left;border:0;border-radius:8px;background:var(--raised);color:var(--muted);font-weight:550;cursor:pointer}
 .eos button:hover{color:var(--text)}.eos button.on{background:var(--accent);color:var(--accent-ink)}
 .sl{margin:0 0 18px}.sl .t{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.sl .t label{margin:0}
 .val{display:flex;align-items:baseline;gap:5px}
@@ -84,7 +84,13 @@ tr:last-child td{border-bottom:0}
 /* theory */
 .prose{max-width:760px;line-height:1.65;font-size:15px;color:#d5dde0}
 .prose h1{margin-bottom:6px}.prose h2{font-size:17px;margin:26px 0 6px;color:var(--text)}
-.prose p{margin:8px 0}.prose .eq{font-family:Georgia,"Times New Roman",serif;font-style:italic;background:var(--side);border:1px solid var(--border);border-radius:8px;padding:10px 16px;margin:10px 0;font-size:16.5px;overflow-x:auto;white-space:nowrap}
+.prose p{margin:8px 0}.prose .eq{position:relative;background:var(--side);border:1px solid var(--border);border-radius:8px;padding:6px 56px 6px 20px;margin:12px 0;overflow-x:auto;overflow-y:hidden}
+.prose .eq .katex-display{margin:.6em 0;text-align:left}
+.prose .eq .katex-display>.katex{text-align:left}
+.prose .eqn{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px}
+.prose .eqn::before{content:"("}.prose .eqn::after{content:")"}
+.prose .katex{font-size:1.08em;color:var(--text)}
+.prose table.tx td .katex,.prose table.tx th .katex{font-size:1em}
 .prose a{color:var(--accent)}.prose ul{padding-left:20px}.prose li{margin:4px 0}
 
 @media (max-width:1100px){
@@ -107,3 +113,6 @@ tr:last-child td{border-bottom:0}
 @media (prefers-reduced-motion:no-preference){
   .tabs button,.eos button,.ghost,.btn{transition:background-color .15s,color .15s,border-color .15s}
 }
+
+/* equations: on narrow screens drop the equation number so wide formulae can scroll cleanly */
+@media (max-width:760px){.prose .eq{padding-right:16px}.prose .eqn{display:none}}
